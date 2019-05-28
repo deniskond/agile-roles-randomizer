@@ -34,6 +34,11 @@
                     <div>{{ chosenRole.teamMember }}</div>
                 </div>
             </ng-container>
+
+            <button (click)="sendToSlack()" *ngIf="chosenRoles && chosenRoles.length && !!slackToken && !!slackChannel" mat-button color="primary">
+                Отправить в Slack
+                <mat-icon>send</mat-icon>
+            </button>
         </mat-card-content>
     </mat-card>
 </div>

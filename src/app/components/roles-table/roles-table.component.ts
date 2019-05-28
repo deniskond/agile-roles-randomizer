@@ -1,5 +1,5 @@
 import { RolesMapInterface } from '../../interfaces/roles-map.interface';
-import { DataStorageService } from './../../services/data-storage.service';
+import { DataStorageService } from '../../services/data-storage/data-storage.service';
 import { Component, Input, SimpleChanges, OnChanges, OnInit } from '@angular/core';
 import { uniq } from 'lodash';
 

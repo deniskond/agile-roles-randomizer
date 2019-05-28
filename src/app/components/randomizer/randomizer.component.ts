@@ -1,11 +1,12 @@
 import { RandomizerModes } from '../../enums/randomizer-modes.enum';
 import { ChosenRoleInterface } from '../../interfaces/chosen-role.interface';
 import { RolesMapInterface } from '../../interfaces/roles-map.interface';
-import { DataStorageService } from '../../services/data-storage.service';
+import { DataStorageService } from '../../services/data-storage/data-storage.service';
 import { Component, OnInit } from '@angular/core';
 import { MatSelectChange, MatSnackBar } from '@angular/material';
 import { ActivatedRoute, Params } from '@angular/router';
 import { take } from 'rxjs/operators';
+import { SlackApiService } from '../../services/slack-api/slack-api.service';
 
 const RANDOMIZE_ITERATIONS_COUNT = 50;
 const RANDOMIZE_MILLISECONDS_COUNT = 2;
@@ -21,6 +22,8 @@ export class RandomizerComponent implements OnInit {
     public rolesMap: RolesMapInterface[];
     public randomizerMode: RandomizerModes;
     public instantChoice: boolean;
+    public slackToken: string;
+    public slackChannel: string;
 
     public checked: Record<string, boolean> = {};
     public lastIterationRoles: Record<string, string> = {};
@@ -29,7 +32,7 @@ export class RandomizerComponent implements OnInit {
     public randomizeCount = 0;
     public randomInProgress = false;
 
-    constructor(private dataStorageService: DataStorageService, private snackBar: MatSnackBar, private route: ActivatedRoute) {}
+    constructor(private dataStorageService: DataStorageService, private slackApiService: SlackApiService, private snackBar: MatSnackBar, private route: ActivatedRoute) {}
 
     ngOnInit(): void {
         this.route.queryParams.pipe(take(1)).subscribe(({ data }: Params) => {
@@ -48,6 +51,8 @@ export class RandomizerComponent implements OnInit {
             this.rolesMap = this.dataStorageService.rolesMap;
             this.randomizerMode = this.dataStorageService.randomizerMode;
             this.instantChoice = this.dataStorageService.instantChoice;
+            this.slackToken = this.dataStorageService.slackToken;
+            this.slackChannel = this.dataStorageService.slackChannel;
 
             this.allTeamMembers.forEach(teamMember => (this.checked[teamMember] = true));
         });
@@ -93,6 +98,10 @@ export class RandomizerComponent implements OnInit {
                 }
             }
         }, RANDOMIZE_MILLISECONDS_COUNT * this.randomizeCount);
+    }
+
+    public sendToSlack(): void {
+        this.slackApiService.setTopic(this.chosenRoles);
     }
 
     private roleComparator(role1: string, role2: string): number {

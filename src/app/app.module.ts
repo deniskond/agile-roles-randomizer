@@ -11,8 +11,10 @@ import { CommonModule } from '@angular/common';
 import { RandomizerComponent } from './components/randomizer/randomizer.component';
 import { SettingsComponent } from './components/settings/settings.component';
 import { RolesTableComponent } from './components/roles-table/roles-table.component';
-import { DataStorageService } from './services/data-storage.service';
+import { DataStorageService } from './services/data-storage/data-storage.service';
 import { ClipboardModule } from 'ngx-clipboard';
+import { SlackApiService } from './services/slack-api/slack-api.service';
+import { HttpClientModule } from '@angular/common/http';
 
 @NgModule({
     imports: [
@@ -23,6 +25,7 @@ import { ClipboardModule } from 'ngx-clipboard';
         CdkTableModule,
         BrowserAnimationsModule,
         ClipboardModule,
+        HttpClientModule,
         RouterModule.forRoot([
             {
                 path: '',
@@ -35,7 +38,7 @@ import { ClipboardModule } from 'ngx-clipboard';
         ]),
     ],
     declarations: [AppComponent, RandomizerComponent, SettingsComponent, RolesTableComponent],
-    providers: [DataStorageService],
+    providers: [DataStorageService, SlackApiService],
     bootstrap: [AppComponent],
 })
 export class AppModule {}

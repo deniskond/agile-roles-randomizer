@@ -1,4 +1,4 @@
-import { DataStorageService } from '../../services/data-storage.service';
+import { DataStorageService } from '../../services/data-storage/data-storage.service';
 import { CdkTableModule } from '@angular/cdk/table';
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { RolesTableComponent } from './roles-table.component';

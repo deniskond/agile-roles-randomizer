@@ -1,6 +1,6 @@
-import { DataStorageInterface } from '../interfaces/data-storage.interface';
-import { RandomizerModes } from '../enums/randomizer-modes.enum';
-import { RolesMapInterface } from '../interfaces/roles-map.interface';
+import { DataStorageInterface } from '../../interfaces/data-storage.interface';
+import { RandomizerModes } from '../../enums/randomizer-modes.enum';
+import { RolesMapInterface } from '../../interfaces/roles-map.interface';
 import { Injectable } from '@angular/core';
 import { Observable, BehaviorSubject } from 'rxjs';
 import { map } from 'rxjs/operators';
@@ -23,6 +23,8 @@ const defaultRolesMap: RolesMapInterface[] = [
 ];
 const defaultRandomizerMode = RandomizerModes.NEW_MEMBERS_FOR_ITERATION;
 const defaultInstantChoice = false;
+const defaultSlackToken = '';
+const defaultSlackChannel = '';
 
 @Injectable()
 export class DataStorageService {
@@ -31,6 +33,8 @@ export class DataStorageService {
     private _roles: string[];
     private _randomizerMode: RandomizerModes;
     private _instantChoice: boolean;
+    private _slackToken: string;
+    private _slackChannel: string;
     private _state = new BehaviorSubject<DataStorageInterface>(null);
 
     public get rolesMap(): RolesMapInterface[] {
@@ -73,6 +77,22 @@ export class DataStorageService {
         this._instantChoice = instantChoice;
     }
 
+    public get slackToken(): string {
+        return this._slackToken || defaultSlackToken;
+    }
+
+    public set slackToken(slackToken: string) {
+        this._slackToken = slackToken;
+    }
+
+    public get slackChannel(): string {
+        return this._slackChannel || defaultSlackChannel;
+    }
+
+    public set slackChannel(slackChannel: string) {
+        this._slackChannel = slackChannel;
+    }
+
     public getState$(): Observable<string> {
         return this._state.pipe(map((state: DataStorageInterface) => JSON.stringify(state)));
     }
@@ -83,6 +103,8 @@ export class DataStorageService {
         this._rolesMap = serviceData.rolesMap;
         this._randomizerMode = serviceData.randomizerMode;
         this._instantChoice = serviceData.instantChoice;
+        this._slackToken = serviceData.slackToken;
+        this._slackChannel = serviceData.slackChannel;
 
         this.updateState();
     }
@@ -94,6 +116,8 @@ export class DataStorageService {
             rolesMap: this.rolesMap,
             randomizerMode: this.randomizerMode,
             instantChoice: this.instantChoice,
+            slackToken: this.slackToken,
+            slackChannel: this.slackChannel,
         });
     }
 }
