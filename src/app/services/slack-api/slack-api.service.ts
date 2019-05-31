@@ -12,7 +12,7 @@ export class SlackApiService {
         const chosenRolesArray: string[] = [];
 
         chosenRoles.forEach((chosenRole: ChosenRoleInterface) => {
-            chosenRolesArray.push(`${chosenRole.role}: ${chosenRole.teamMember}`);
+            chosenRolesArray.push(`${chosenRole.role}: <@${chosenRole.teamMember}>`);
         });
 
         const topic = `${LINE_BREAK_CHARACTER}${chosenRolesArray.join(LINE_BREAK_CHARACTER)}`;
