@@ -1,9 +1,11 @@
+import { MinimizedDataStorageInterface } from '../../interfaces/minimized-data-storage.interface';
 import { DataStorageInterface } from '../../interfaces/data-storage.interface';
 import { RandomizerModes } from '../../enums/randomizer-modes.enum';
 import { RolesMapInterface } from '../../interfaces/roles-map.interface';
 import { Injectable } from '@angular/core';
-import { Observable, BehaviorSubject } from 'rxjs';
+import { Observable, ReplaySubject } from 'rxjs';
 import { map } from 'rxjs/operators';
+import { compressSettings, decompressSettings } from '../../helpers/data-compression.helper';
 
 const defaultRoles: string[] = ['Scrum Master', 'Release Manager'];
 const defaultTeamMembers: string[] = ['Name 1', 'Name 2', 'Name 3'];
@@ -35,7 +37,7 @@ export class DataStorageService {
     private _instantChoice: boolean;
     private _slackToken: string;
     private _slackChannel: string;
-    private _state = new BehaviorSubject<DataStorageInterface>(null);
+    private _state = new ReplaySubject<DataStorageInterface>();
 
     public get rolesMap(): RolesMapInterface[] {
         return this._rolesMap || defaultRolesMap;
@@ -94,10 +96,12 @@ export class DataStorageService {
     }
 
     public getState$(): Observable<string> {
-        return this._state.pipe(map((state: DataStorageInterface) => JSON.stringify(state)));
+        return this._state.pipe(map((state: DataStorageInterface) => JSON.stringify(compressSettings(state))));
     }
 
-    public restoreState(serviceData: DataStorageInterface): void {
+    public restoreState(minimizedServiceData: MinimizedDataStorageInterface): void {
+        const serviceData = decompressSettings(minimizedServiceData);
+
         this._teamMembers = serviceData.teamMembers;
         this._roles = serviceData.roles;
         this._rolesMap = serviceData.rolesMap;
