@@ -37,7 +37,7 @@ export class DataStorageService {
     private _instantChoice: boolean;
     private _slackToken: string;
     private _slackChannel: string;
-    private _state = new ReplaySubject<DataStorageInterface>();
+    private _state = new ReplaySubject<DataStorageInterface>(1);
 
     public get rolesMap(): RolesMapInterface[] {
         return this._rolesMap || defaultRolesMap;

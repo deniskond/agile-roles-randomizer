@@ -19,15 +19,14 @@ export function compressSettings({
 
             return roles.map((role: string) => +teamMemberRoles.includes(role)).join('');
         })
-        .join('');
-
-    const integerRepresentation = parseInt(`1${compressedRolesMap}`, 2);
-    const stringifiedMap = integerRepresentation.toString(NUMBER_SYSTEM_BASE);
+        .map((stringifiedMemberRoles: string) => parseInt(`1${stringifiedMemberRoles}`, 2))
+        .map((integerRepresentation: number) => integerRepresentation.toString(NUMBER_SYSTEM_BASE))
+        .join('|');
 
     return {
         t: teamMembers,
         r: roles,
-        z: stringifiedMap,
+        z: compressedRolesMap,
         m: randomizerMode,
         i: +instantChoice,
         s: slackToken,
@@ -38,12 +37,16 @@ export function compressSettings({
 export function decompressSettings({ t, r, z, m, i, s, c }: MinimizedDataStorageInterface): DataStorageInterface {
     const teamMembers = t;
     const roles = r;
-    const destringifedMap = parseInt(z, NUMBER_SYSTEM_BASE);
-    const stringRepresentation = destringifedMap.toString(2).substr(1);
+
+    const stringRepresentation = z
+        .split('|')
+        .map((stringifiedMemberRoles: string) => parseInt(stringifiedMemberRoles, NUMBER_SYSTEM_BASE))
+        .map((integerRepresentation: number) => integerRepresentation.toString(2).substr(1))
+        .join('');
 
     const rolesMap = teamMembers.map((teamMember: string, teamMemberIndex: number) => ({
         teamMember,
-        teamMemberRoles: roles.filter((_, roleIndex: number) => !!stringRepresentation[teamMemberIndex * roles.length + roleIndex]),
+        teamMemberRoles: roles.filter((_, roleIndex: number) => !!+stringRepresentation[teamMemberIndex * roles.length + roleIndex]),
     }));
 
     return {
